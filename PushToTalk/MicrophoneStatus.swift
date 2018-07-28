@@ -8,33 +8,32 @@
 
 import Cocoa
 
-protocol AssociatedImage {
-    func image() -> NSImage
-    func title() -> String
-}
-
 enum MicrophoneStatus {
-    case Muted
-    case Speaking
+    case muted
+    case speaking
 }
 
-extension MicrophoneStatus: AssociatedImage {
-    func image() -> NSImage {
+protocol GUIRepresentable {
+    var image: NSImage { get }
+    var title: String { get }
+}
+
+extension MicrophoneStatus: GUIRepresentable {
+    var image: NSImage {
         switch self {
-        case .Muted:
+        case .muted:
             return NSImage(named: NSImage.Name(rawValue: "statusIconMute"))!
-        case .Speaking:
+        case .speaking:
             return NSImage(named: NSImage.Name(rawValue: "statusIconTalk"))!
         }
     }
-    
-    func title() -> String {
+
+    var title: String {
         switch self {
-        case .Muted:
+        case .muted:
             return "Disable"
-        case .Speaking:
+        case .speaking:
             return "Enable"
         }
     }
 }
-

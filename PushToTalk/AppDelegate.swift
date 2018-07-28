@@ -7,39 +7,36 @@
 //
 
 import Cocoa
-import AudioToolbox
 
 @NSApplicationMain
+final class AppDelegate: NSObject, NSApplicationDelegate {
 
-class AppDelegate: NSObject, NSApplicationDelegate {
-
-    @IBOutlet weak var window: NSWindow!
-    @IBOutlet weak var statusMenu: NSMenu!
-    @IBOutlet weak var menuItemToggle: NSMenuItem!
+    @IBOutlet private weak var window: NSWindow!
+    @IBOutlet private weak var statusMenu: NSMenu!
+    @IBOutlet private weak var menuItemToggle: NSMenuItem!
     
-    let microphone = Microphone()
+    private let microphone = Microphone()
+    private let keyHandler = KeyPressHandler(keyCode: 61, isModifierKey: true)
     
-    let statusItem = NSStatusBar.system.statusItem(withLength: -1)
+    private let statusItem = NSStatusBar.system.statusItem(withLength: -1)
 
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         statusItem.menu = statusMenu
-        self.microphone.statusUpdated = { (status) in
-            self.menuItemToggle.title = status.title()
-            self.statusItem.image = status.image()
+        microphone.statusUpdated = { [weak self] status in
+            self?.menuItemToggle.title = status.title
+            self?.statusItem.image = status.image
         }
         
-        self.microphone.status = .Muted
+        microphone.status = .muted
     }
-    
-    
+
     // MARK: Menu item Actions
-    @IBAction func toggleAction(_ sender: NSMenuItem) {
-        self.microphone.toggle()
+    @IBAction private func toggleAction(_ sender: NSMenuItem) {
+        microphone.toggleStatus()
     }
     
-    @IBAction func menuItemQuitAction(_ sender: NSMenuItem) {
-        self.microphone.status = .Speaking
+    @IBAction private func menuItemQuitAction(_ sender: NSMenuItem) {
+        microphone.status = .speaking
         exit(0)
     }
 }
-
